@@ -11,75 +11,27 @@ import {
 } from 'react-native';
 import { AreaCard } from '../components/AreaCard';
 import { AreaMonitoramento, StatusVegetacao } from '../types/areaMonitoramento';
-
-// 1. Dados de teste para ver a interface sem o Backend
-const DADOS_MOCK: AreaMonitoramento[] = [
-  {
-    id: 1,
-    codigo: 'AREA-1',
-    rodovia: 'BR-116',
-    kmInicial: 10.5,
-    kmFinal: 12.0,
-    localizacao: 'Trecho Norte',
-    status: StatusVegetacao.URGENTE,
-    statusDescricao: 'Crescimento excessivo detectado',
-    tipoTerreno: 'Plano',
-    densidade: 85,
-    alturaMedia: 1.2,
-    complexidade: 3,
-    ultimaMedicao: new Date().toISOString(),
-    proximaIntervencao: null,
-    totalMedicoes: 15
-  },
-  {
-    id: 2,
-    codigo: 'AREA-2',
-    rodovia: 'SP-310',
-    kmInicial: 45.0,
-    kmFinal: 46.5,
-    localizacao: 'Acostamento Sul',
-    status: StatusVegetacao.NORMAL,
-    statusDescricao: 'Vegetação sob controle',
-    tipoTerreno: 'Aclive',
-    densidade: 20,
-    alturaMedia: 0.3,
-    complexidade: 1,
-    ultimaMedicao: new Date().toISOString(),
-    proximaIntervencao: null,
-    totalMedicoes: 8
-  },
-  {
-    id: 3,
-    codigo: 'AREA-3',
-    rodovia: 'RJ-210',
-    kmInicial: 45.0,
-    kmFinal: 46.5,
-    localizacao: 'Acostamento Sul',
-    status: StatusVegetacao.ATENCAO,
-    statusDescricao: 'Vegetação com crescimento moderado',
-    tipoTerreno: 'Declive',
-    densidade: 80,
-    alturaMedia: 1.0,
-    complexidade: 2,
-    ultimaMedicao: new Date().toISOString(),
-    proximaIntervencao: null,
-    totalMedicoes: 11
-  }
-];
+import { api } from '../services/api';
 
 export const DashboardScreen: React.FC = () => {
   const [areas, setAreas] = useState<AreaMonitoramento[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState<StatusVegetacao | 'TODOS'>('TODOS');
+  const [erro, setErro] = useState<string | null>(null);
 
   const carregarAreas = async () => {
-    setLoading(true);
-    // Simula um atraso de rede de 1 segundo
-    setTimeout(() => {
-      setAreas(DADOS_MOCK);
+    try {
+      setErro(null);
+      setLoading(true);
+      const dados = await api.areas.listarTodas();
+      setAreas(dados);
+    } catch (error) {
+      setErro('Não foi possível conectar à API. Verifique se o servidor está rodando.');
+      Alert.alert('Erro', 'Não foi possível carregar as áreas. Verifique se a API está rodando na porta 8080.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   useEffect(() => {
@@ -105,7 +57,18 @@ export const DashboardScreen: React.FC = () => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#6200EE" />
-        <Text style={styles.loadingText}>Carregando interface...</Text>
+        <Text style={styles.loadingText}>Carregando dados da API...</Text>
+      </View>
+    );
+  }
+
+  if (erro) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.erroText}>{erro}</Text>
+        <TouchableOpacity style={styles.clearFilterButton} onPress={carregarAreas}>
+          <Text style={styles.clearFilterText}>Tentar novamente</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -164,7 +127,6 @@ export const DashboardScreen: React.FC = () => {
   );
 };
 
-// Objeto de estilos (O que estava faltando ou causando erro)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -174,13 +136,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#1c1c1c',
+    padding: 20,
   },
   loadingText: {
     marginTop: 10,
-    color: '#000000',
+    color: '#dae5dd',
+  },
+  erroText: {
+    color: '#ff6b6b',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontSize: 14,
   },
   header: {
-    backgroundColor: '#1c1c1c',//#10182b
+    backgroundColor: '#1c1c1c',
     padding: 20,
     paddingTop: 50,
   },
