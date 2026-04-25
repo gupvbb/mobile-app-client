@@ -8,16 +8,17 @@ type Props = {
 };
 
 export const AreaCard: React.FC<Props> = ({ area, onPress }) => {
+
   const getStatusColor = (status: StatusVegetacao): string => {
     switch (status) {
       case StatusVegetacao.NORMAL:
-        return '#4CAF50'; // Verde
+        return '#1cb321'; // verde tech
       case StatusVegetacao.ATENCAO:
-        return '#FF9800'; // Laranja
+        return '#ffc800'; // azul (menos agressivo que laranja)
       case StatusVegetacao.URGENTE:
-        return '#F44336'; // Vermelho
+        return '#c50d00'; // vermelho moderno
       default:
-        return '#9E9E9E'; // Cinza
+        return '#69727f'; // cinza elegante
     }
   };
 
@@ -47,12 +48,13 @@ export const AreaCard: React.FC<Props> = ({ area, onPress }) => {
   };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Text style={styles.codigo}>{area.codigo}</Text>
           <Text style={styles.rodovia}>{area.rodovia}</Text>
         </View>
+
         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(area.status) }]}>
           <Text style={styles.statusText}>{getStatusLabel(area.status)}</Text>
         </View>
@@ -63,12 +65,14 @@ export const AreaCard: React.FC<Props> = ({ area, onPress }) => {
           <Text style={styles.label}>Localização:</Text>
           <Text style={styles.value}>{area.localizacao}</Text>
         </View>
+
         <View style={styles.infoRow}>
           <Text style={styles.label}>Km:</Text>
           <Text style={styles.value}>
             {area.kmInicial.toFixed(1)} - {area.kmFinal.toFixed(1)}
           </Text>
         </View>
+
         <View style={styles.infoRow}>
           <Text style={styles.label}>Terreno:</Text>
           <Text style={styles.value}>{area.tipoTerreno}</Text>
@@ -82,12 +86,14 @@ export const AreaCard: React.FC<Props> = ({ area, onPress }) => {
             {area.alturaMedia ? `${area.alturaMedia.toFixed(2)}m` : '-'}
           </Text>
         </View>
+
         <View style={styles.metricBox}>
           <Text style={styles.metricLabel}>Densidade</Text>
           <Text style={styles.metricValue}>
             {area.densidade ? `${area.densidade.toFixed(1)}%` : '-'}
           </Text>
         </View>
+
         <View style={styles.metricBox}>
           <Text style={styles.metricLabel}>Medições</Text>
           <Text style={styles.metricValue}>{area.totalMedicoes}</Text>
@@ -105,95 +111,116 @@ export const AreaCard: React.FC<Props> = ({ area, onPress }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    backgroundColor: '#1c1c1c', // fundo tech
+    borderRadius: 16,
     padding: 16,
     marginBottom: 16,
+
+    borderWidth: 1,
+    borderColor: '#62b156',
+
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 6,
   },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    marginBottom: 14,
   },
+
   headerLeft: {
     flex: 1,
   },
+
   codigo: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
+    fontWeight: '600',
+    color: '#E2E8F0',
+    marginBottom: 2,
   },
+
   rodovia: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 13,
+    color: '#a3b0c2',
   },
+
   statusBadge: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 20,
   },
+
   statusText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: 'bold',
+    color: '#0F172A',
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
+
   info: {
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    paddingTop: 12,
-    marginBottom: 12,
+    borderTopColor: '#1E293B',
+    paddingTop: 10,
+    marginBottom: 10,
   },
+
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 6,
   },
+
   label: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 13,
+    color: '#94A3B8',
   },
+
   value: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: 13,
+    color: '#E2E8F0',
     fontWeight: '500',
   },
+
   metrics: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
-    paddingVertical: 12,
+    marginBottom: 10,
+    paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: '#1E293B',
   },
+
   metricBox: {
     flex: 1,
     alignItems: 'center',
   },
+
   metricLabel: {
-    fontSize: 11,
-    color: '#999',
+    fontSize: 10,
+    color: '#94A3B8',
     marginBottom: 4,
   },
+
   metricValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#3c7549', // destaque tech
   },
+
   footer: {
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: '#1E293B',
     paddingTop: 8,
   },
+
   footerText: {
-    fontSize: 12,
-    color: '#999',
+    fontSize: 11,
+    color: '#94A3B8',
     textAlign: 'center',
   },
 });

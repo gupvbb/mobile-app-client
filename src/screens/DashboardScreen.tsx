@@ -16,7 +16,7 @@ import { AreaMonitoramento, StatusVegetacao } from '../types/areaMonitoramento';
 const DADOS_MOCK: AreaMonitoramento[] = [
   {
     id: 1,
-    codigo: 'AREA-001',
+    codigo: 'AREA-1',
     rodovia: 'BR-116',
     kmInicial: 10.5,
     kmFinal: 12.0,
@@ -33,7 +33,7 @@ const DADOS_MOCK: AreaMonitoramento[] = [
   },
   {
     id: 2,
-    codigo: 'AREA-002',
+    codigo: 'AREA-2',
     rodovia: 'SP-310',
     kmInicial: 45.0,
     kmFinal: 46.5,
@@ -47,6 +47,23 @@ const DADOS_MOCK: AreaMonitoramento[] = [
     ultimaMedicao: new Date().toISOString(),
     proximaIntervencao: null,
     totalMedicoes: 8
+  },
+  {
+    id: 3,
+    codigo: 'AREA-3',
+    rodovia: 'RJ-210',
+    kmInicial: 45.0,
+    kmFinal: 46.5,
+    localizacao: 'Acostamento Sul',
+    status: StatusVegetacao.ATENCAO,
+    statusDescricao: 'Vegetação com crescimento moderado',
+    tipoTerreno: 'Declive',
+    densidade: 80,
+    alturaMedia: 1.0,
+    complexidade: 2,
+    ultimaMedicao: new Date().toISOString(),
+    proximaIntervencao: null,
+    totalMedicoes: 11
   }
 ];
 
@@ -98,13 +115,13 @@ export const DashboardScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>VerdeSmart</Text>
+        <Text style={styles.title}>RoadGreen</Text>
         <Text style={styles.subtitle}>Monitoramento de Vegetação</Text>
       </View>
 
       <View style={styles.statusContainer}>
         <TouchableOpacity
-          style={[styles.statusCard, { backgroundColor: '#F44336' }, filtroStatus === StatusVegetacao.URGENTE && styles.statusCardActive]}
+          style={[styles.statusCard, { backgroundColor: '#c50d00' }, filtroStatus === StatusVegetacao.URGENTE && styles.statusCardActive]}
           onPress={() => setFiltroStatus(StatusVegetacao.URGENTE)}
         >
           <Text style={styles.statusNumber}>{contarPorStatus(StatusVegetacao.URGENTE)}</Text>
@@ -112,7 +129,7 @@ export const DashboardScreen: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.statusCard, { backgroundColor: '#FF9800' }, filtroStatus === StatusVegetacao.ATENCAO && styles.statusCardActive]}
+          style={[styles.statusCard, { backgroundColor: '#ffc800' }, filtroStatus === StatusVegetacao.ATENCAO && styles.statusCardActive]}
           onPress={() => setFiltroStatus(StatusVegetacao.ATENCAO)}
         >
           <Text style={styles.statusNumber}>{contarPorStatus(StatusVegetacao.ATENCAO)}</Text>
@@ -120,7 +137,7 @@ export const DashboardScreen: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.statusCard, { backgroundColor: '#4CAF50' }, filtroStatus === StatusVegetacao.NORMAL && styles.statusCardActive]}
+          style={[styles.statusCard, { backgroundColor: '#1cb321' }, filtroStatus === StatusVegetacao.NORMAL && styles.statusCardActive]}
           onPress={() => setFiltroStatus(StatusVegetacao.NORMAL)}
         >
           <Text style={styles.statusNumber}>{contarPorStatus(StatusVegetacao.NORMAL)}</Text>
@@ -151,7 +168,7 @@ export const DashboardScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#1c1c1c',
   },
   loadingContainer: {
     flex: 1,
@@ -160,27 +177,27 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    color: '#666',
+    color: '#000000',
   },
   header: {
-    backgroundColor: '#6200EE',
+    backgroundColor: '#1c1c1c',//#10182b
     padding: 20,
     paddingTop: 50,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: '#48a231',
   },
   subtitle: {
     fontSize: 14,
-    color: '#E0E0E0',
+    color: '#dae5dd',
   },
   statusContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 10,
-    backgroundColor: '#FFF',
+    backgroundColor: '#1c1c1c',
   },
   statusCard: {
     flex: 1,
@@ -196,21 +213,21 @@ const styles = StyleSheet.create({
   statusNumber: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: '#ffffff',
   },
   statusLabel: {
     fontSize: 10,
-    color: '#FFF',
+    color: '#ffffff',
   },
   clearFilterButton: {
-    backgroundColor: '#6200EE',
+    backgroundColor: '#173629',
     padding: 10,
     margin: 10,
     borderRadius: 5,
     alignItems: 'center',
   },
   clearFilterText: {
-    color: '#FFF',
+    color: '#ffffff',
     fontWeight: 'bold',
   },
   list: {

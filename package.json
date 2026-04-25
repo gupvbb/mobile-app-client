@@ -13,12 +13,14 @@
     "@expo/metro-runtime": "~55.0.10",
     "axios": "^1.15.2",
     "expo": "^55.0.17",
+    "expo-blur": "^55.0.14",
     "expo-constants": "~55.0.15",
     "expo-linking": "~55.0.14",
     "expo-status-bar": "~55.0.5",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.76.6",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-web": "^0.21.0"
   },
   "devDependencies": {
