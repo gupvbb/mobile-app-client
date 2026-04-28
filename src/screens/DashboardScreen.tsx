@@ -8,10 +8,21 @@ import {
   TouchableOpacity,
   RefreshControl,
   Alert,
+  Modal,
 } from 'react-native';
 import { AreaCard } from '../components/AreaCard';
 import { AreaMonitoramento, StatusVegetacao } from '../types/areaMonitoramento';
 import { api } from '../services/api';
+
+type ModalConfig = {
+  visible: boolean;
+  title: string;
+  message: string;
+  onConfirm?: () => void;
+  confirmText?: string;
+  cancelText?: string;
+  showCancel?: boolean;
+};
 
 export const DashboardScreen: React.FC = () => {
   const [areas, setAreas] = useState<AreaMonitoramento[]>([]);
@@ -19,6 +30,19 @@ export const DashboardScreen: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState<StatusVegetacao | 'TODOS'>('TODOS');
   const [erro, setErro] = useState<string | null>(null);
+  const [modal, setModal] = useState<ModalConfig>({
+    visible: false,
+    title: '',
+    message: '',
+  });
+
+  const showModal = (config: Omit<ModalConfig, 'visible'>) => {
+    setModal({ ...config, visible: true });
+  };
+
+  const hideModal = () => {
+    setModal((prev) => ({ ...prev, visible: false }));
+  };
 
   const carregarAreas = async () => {
     try {
@@ -42,6 +66,40 @@ export const DashboardScreen: React.FC = () => {
     setRefreshing(true);
     await carregarAreas();
     setRefreshing(false);
+  };
+
+  const simularColeta = () => {
+    showModal({
+      title: '🔬 Simular Coleta',
+      message: 'Deseja simular a coleta de dados de todas as áreas?',
+      confirmText: 'Confirmar',
+      cancelText: 'Cancelar',
+      showCancel: true,
+      onConfirm: async () => {
+        hideModal();
+        try {
+          setLoading(true);
+          await api.medicoes.simularTodasAreas();
+          await carregarAreas();
+          showModal({
+            title: '✅ Sucesso',
+            message: 'Coleta de dados simulada com sucesso!',
+            confirmText: 'OK',
+            showCancel: false,
+          });
+        } catch (error) {
+          console.error('Erro ao simular coleta:', error);
+          showModal({
+            title: 'Erro',
+            message: 'Não foi possível simular a coleta de dados.',
+            confirmText: 'OK',
+            showCancel: false,
+          });
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   const filtrarAreas = (): AreaMonitoramento[] => {
@@ -77,6 +135,36 @@ export const DashboardScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+
+      {/* Modal customizado */}
+      <Modal visible={modal.visible} transparent animationType="fade" onRequestClose={hideModal}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>{modal.title}</Text>
+            <Text style={styles.modalMessage}>{modal.message}</Text>
+            <View style={styles.modalButtons}>
+              {modal.showCancel && (
+                <TouchableOpacity style={styles.modalButtonCancel} onPress={hideModal}>
+                  <Text style={styles.modalButtonCancelText}>{modal.cancelText ?? 'Cancelar'}</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                style={styles.modalButtonConfirm}
+                onPress={() => {
+                  if (modal.onConfirm) {
+                    modal.onConfirm();
+                  } else {
+                    hideModal();
+                  }
+                }}
+              >
+                <Text style={styles.modalButtonConfirmText}>{modal.confirmText ?? 'OK'}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <View style={styles.header}>
         <Text style={styles.title}>RoadGreen</Text>
         <Text style={styles.subtitle}>Monitoramento de Vegetação</Text>
@@ -123,6 +211,11 @@ export const DashboardScreen: React.FC = () => {
         contentContainerStyle={styles.list}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
+
+      {/* Botão flutuante */}
+      <TouchableOpacity style={styles.fab} onPress={simularColeta}>
+        <Text style={styles.fabText}>🔬 Simular Coleta</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -202,5 +295,81 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 10,
+  },
+
+  // FAB
+  fab: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#173629',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: '#48a231',
+    elevation: 8,
+  },
+  fabText: {
+    color: '#48a231',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#1c1c1c',
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+    borderRadius: 16,
+    padding: 24,
+    width: '85%',
+    maxWidth: 400,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#48a231',
+    marginBottom: 12,
+  },
+  modalMessage: {
+    fontSize: 15,
+    color: '#dae5dd',
+    lineHeight: 22,
+    marginBottom: 24,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+  },
+  modalButtonCancel: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+  },
+  modalButtonCancelText: {
+    color: '#dae5dd',
+    fontWeight: 'bold',
+  },
+  modalButtonConfirm: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: '#173629',
+    borderWidth: 1,
+    borderColor: '#48a231',
+  },
+  modalButtonConfirmText: {
+    color: '#48a231',
+    fontWeight: 'bold',
   },
 });
