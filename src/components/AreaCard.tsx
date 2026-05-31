@@ -79,6 +79,12 @@ export const AreaCard: React.FC<Props> = ({ area, onPress }) => {
         </View>
       </View>
 
+      <View style={styles.infoRow}>
+        <Text style={styles.label}>Sensor:</Text>
+        <Text style={styles.value}> {area.ultimaMedicao ? `SENSOR-${area.codigo}` : 'Sem sensor'}
+        </Text>
+      </View>
+
       <View style={styles.metrics}>
         <View style={styles.metricBox}>
           <Text style={styles.metricLabel}>Altura Média</Text>
