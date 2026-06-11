@@ -22,12 +22,3 @@ export type Medicao = {
   observacoes: string | null;
 };
 
-export type MedicaoInput = {
-  alturaVegetacao: number;
-  densidade: number;
-  temperatura: number;
-  umidade: number;
-  tipoVegetacao?: string;
-  inclinacaoTerreno?: number;
-  observacoes?: string;
-};
