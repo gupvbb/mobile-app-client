@@ -14,9 +14,13 @@ export const SensorCard: React.FC<Props> = ({ medicao, onPress }) => {
   const color = getStatusColor(status);
 
   return (
-    <TouchableOpacity style={[styles.card, { borderLeftColor: color }]} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.card, { borderColor: color }]}
+      onPress={onPress}
+      activeOpacity={0.9}
+    >
       <View style={styles.header}>
-        <View>
+        <View style={styles.headerLeft}>
           <Text style={styles.sensorNome}>Sensor de Vegetação</Text>
           <Text style={styles.sensorTipo}>Área: {medicao.areaCodigo}</Text>
         </View>
@@ -25,31 +29,35 @@ export const SensorCard: React.FC<Props> = ({ medicao, onPress }) => {
         </View>
       </View>
 
-      <View style={styles.valorContainer}>
-        <Text style={[styles.valor, { color }]}>{valorPrincipal.toFixed(2)}</Text>
-        <Text style={styles.unidade}>m</Text>
+      <View style={styles.info}>
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Densidade:</Text>
+          <Text style={styles.value}>{medicao.densidade.toFixed(1)}%</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Temperatura:</Text>
+          <Text style={styles.value}>{medicao.temperatura}°C</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Umidade:</Text>
+          <Text style={styles.value}>{medicao.umidade}%</Text>
+        </View>
       </View>
 
-      <View style={styles.divider} />
-
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>Densidade:</Text>
-        <Text style={styles.infoValue}>{medicao.densidade.toFixed(1)}%</Text>
+      <View style={styles.metrics}>
+        <View style={styles.metricBox}>
+          <Text style={styles.metricLabel}>Altura</Text>
+          <Text style={[styles.metricValue, { color }]}>
+            {valorPrincipal.toFixed(2)}m
+          </Text>
+        </View>
       </View>
 
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>Temperatura:</Text>
-        <Text style={styles.infoValue}>{medicao.temperatura}°C</Text>
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>
+          {new Date(medicao.dataColeta).toLocaleString('pt-BR')}
+        </Text>
       </View>
-
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>Umidade:</Text>
-        <Text style={styles.infoValue}>{medicao.umidade}%</Text>
-      </View>
-
-      <Text style={styles.data}>
-        {new Date(medicao.dataColeta).toLocaleString('pt-BR')}
-      </Text>
     </TouchableOpacity>
   );
 };
@@ -61,26 +69,32 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#1E1E1E',
-    borderLeftWidth: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    marginBottom: 14,
+  },
+  headerLeft: {
+    flex: 1,
   },
   sensorNome: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#D0D0D0',
-    letterSpacing: 0.3,
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#E0E0E0',
+    letterSpacing: 0.5,
+    marginBottom: 2,
   },
   sensorTipo: {
     fontSize: 12,
-    color: '#6A6A6A',
-    marginTop: 2,
-    letterSpacing: 0.5,
+    color: '#7A7A7A',
+    letterSpacing: 0.3,
   },
   statusBadge: {
     paddingHorizontal: 10,
@@ -90,50 +104,63 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 11,
-    fontWeight: 'bold',
+    fontWeight: '700',
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
-  valorContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginVertical: 8,
-  },
-  valor: {
-    fontSize: 42,
-    fontWeight: 'bold',
-  },
-  unidade: {
-    fontSize: 16,
-    color: '#6A6A6A',
-    marginLeft: 6,
-    letterSpacing: 1,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#1E1E1E',
-    marginVertical: 10,
+  info: {
+    borderTopWidth: 1,
+    borderTopColor: '#1E1E1E',
+    paddingTop: 10,
+    marginBottom: 10,
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 3,
+    marginBottom: 6,
   },
-  infoLabel: {
+  label: {
+    fontSize: 12,
     color: '#6A6A6A',
-    fontSize: 12,
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
-  infoValue: {
-    color: '#C0C0C0',
+  value: {
     fontSize: 12,
+    color: '#C0C0C0',
     fontWeight: '500',
   },
-  data: {
+  metrics: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#1E1E1E',
+  },
+  metricBox: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  metricLabel: {
+    fontSize: 10,
+    color: '#6A6A6A',
+    marginBottom: 4,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  metricValue: {
+    fontSize: 17,
+    fontWeight: '700',
+  },
+  footer: {
+    borderTopWidth: 1,
+    borderTopColor: '#1E1E1E',
+    paddingTop: 8,
+  },
+  footerText: {
     fontSize: 11,
     color: '#5A5A5A',
-    marginTop: 10,
-    textAlign: 'right',
+    textAlign: 'center',
     letterSpacing: 0.5,
   },
 });
