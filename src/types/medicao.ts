@@ -10,15 +10,16 @@ export type MedicaoSimples = {
 export type Medicao = {
   id: number;
   areaId: number;
-  areaCodigo: string;
+  areaCodigo?: string;
   alturaVegetacao: number;
   densidade: number;
   temperatura: number;
   umidade: number;
-  tipoVegetacao: string | null;
-  inclinacaoTerreno: number | null;
+  tipoVegetacao?: string | null;
+  inclinacaoTerreno?: number | null;
   dataColeta: string;
-  sensorId: string | null;
-  observacoes: string | null;
+  sensorId?: string | null;
+  sensor?: Sensor;
+  observacoes?: string | null;
+  status?: string;
 };
-

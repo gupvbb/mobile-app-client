@@ -6,20 +6,34 @@ export function calcularStatus(valor: number): StatusMedicao {
   return "normal";
 }
 
-export function getStatusColor(status: StatusMedicao): string {
-  switch (status) {
-    case "critico": return "#EF4444";
-    case "alerta": return "#F97316";
-    case "normal": return "#4ADE80";
-    default: return "#6B7C6B";
+export function getStatusColor(status: StatusMedicao | string): string {
+  const s = status.toLowerCase();
+  switch (s) {
+    case "critico":
+    case "urgente":
+      return "#EF4444"; // Vermelho
+    case "alerta":
+    case "atencao":
+      return "#F97316"; // Laranja
+    case "normal":
+      return "#22C55E"; // Verde
+    default:
+      return "#6B7280"; // Cinza
   }
 }
 
-export function getStatusLabel(status: StatusMedicao): string {
-  switch (status) {
-    case "critico": return "Crítico";
-    case "alerta": return "Alerta";
-    case "normal": return "Normal";
-    default: return "Desconhecido";
+export function getStatusLabel(status: StatusMedicao | string): string {
+  const s = status.toLowerCase();
+  switch (s) {
+    case "critico":
+    case "urgente":
+      return "CRÍTICO";
+    case "alerta":
+    case "atencao":
+      return "ALERTA";
+    case "normal":
+      return "NORMAL";
+    default:
+      return status.toUpperCase();
   }
 }

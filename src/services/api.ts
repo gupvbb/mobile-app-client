@@ -1,7 +1,11 @@
+import { Platform } from 'react-native';
 import { AreaMonitoramento } from '../types/areaMonitoramento';
 import { Medicao } from '../types/medicao';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+// Define o IP dinâmico conforme a plataforma de execução
+const API_BASE_URL = Platform.OS === 'android'
+  ? 'http://172.20.10.2/api'
+  : 'http://localhost:8080/api';
 
 export const api = {
   // Áreas de Monitoramento
@@ -29,7 +33,7 @@ export const api = {
   medicoes: {
     listarTodas: async (): Promise<Medicao[]> => {
       const response = await fetch(`${API_BASE_URL}/medicoes`);
-      if (!response.ok) throw new Error('Erro ao buscar medições');
+      if (!response.ok) throw new Error('Erro ao buscar medições no servidor');
       return response.json();
     },
 
@@ -39,11 +43,11 @@ export const api = {
       return response.json();
     },
 
-    simularColeta: async (areaId: number): Promise<Medicao> => {
+    simularColeta: async (areaId: number = 1): Promise<Medicao> => {
       const response = await fetch(`${API_BASE_URL}/medicoes/simular/${areaId}`, {
         method: 'POST',
       });
-      if (!response.ok) throw new Error('Erro ao simular coleta de dados');
+      if (!response.ok) throw new Error('Erro ao simular coleta no backend');
       return response.json();
     },
 

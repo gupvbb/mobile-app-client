@@ -59,8 +59,7 @@ export const DashboardScreen: React.FC = () => {
       setAreas(dadosAreas);
       setMedicao(dadosMedicoes);
     } catch (error) {
-      setErro('Não foi possível conectar à API. Verifique se o servidor está rodando.');
-      Alert.alert('Erro', 'Não foi possível carregar as áreas. Verifique se a API está rodando na porta 8080.');
+      setErro('Servidor indisponível (Backend Offline). Verifique se a API Spring Boot está rodando na porta 8080.');
     } finally {
       setLoading(false);
     }
@@ -79,7 +78,7 @@ export const DashboardScreen: React.FC = () => {
   const handleAreaPress = (area: AreaMonitoramento) => {
     showModal({
       title: `📍 Área #${area.id}`,
-      message: `Status: ${area.status}\n\nDetalhes completos em breve.`,
+      message: `Código: ${area.codigo}\nRodovia: ${area.rodovia}\nStatus: ${area.status}\nKM: ${area.kmInicial} - ${area.kmFinal}`,
       confirmText: 'OK',
       showCancel: false,
     });
@@ -88,7 +87,7 @@ export const DashboardScreen: React.FC = () => {
   const simularColeta = () => {
     showModal({
       title: '🔬 Simular Coleta',
-      message: 'Deseja simular a coleta de novos dados dos sensores em todas as áreas?',
+      message: 'Deseja disparar uma nova requisição POST para o backend simular a coleta de dados?',
       confirmText: 'Confirmar',
       cancelText: 'Cancelar',
       showCancel: true,
@@ -100,7 +99,7 @@ export const DashboardScreen: React.FC = () => {
           await carregarDados();
           showModal({
             title: '✅ Sucesso!',
-            message: 'Coleta de dados simulada com sucesso!',
+            message: 'Medições geradas e atualizadas pelo backend!',
             confirmText: 'OK',
             showCancel: false,
           });
@@ -108,7 +107,7 @@ export const DashboardScreen: React.FC = () => {
           console.error('Erro ao simular coleta:', error);
           showModal({
             title: 'Erro',
-            message: 'Não foi possível simular a coleta de dados.',
+            message: 'Não foi possível conectar ao backend para registrar a medição.',
             confirmText: 'OK',
             showCancel: false,
           });
@@ -152,7 +151,6 @@ export const DashboardScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-
       {/* Modal customizado */}
       <Modal visible={modal.visible} transparent animationType="fade" onRequestClose={hideModal}>
         <View style={styles.modalOverlay}>
@@ -201,7 +199,7 @@ export const DashboardScreen: React.FC = () => {
           style={[styles.tab, abaAtual === 'sensores' && styles.tabActive]}
           onPress={() => setAbaAtual('sensores')}
         >
-          <Text style={[styles.tabText, abaAtual === 'sensores' && styles.tabTextActive]}>Sensores</Text>
+          <Text style={[styles.tabText, abaAtual === 'sensores' && styles.tabTextActive]}>Medições / Sensores</Text>
         </TouchableOpacity>
       </View>
 
@@ -210,7 +208,11 @@ export const DashboardScreen: React.FC = () => {
         <>
           <View style={styles.statusContainer}>
             <TouchableOpacity
-              style={[styles.statusCard, { backgroundColor: '#1A0A0A', borderColor: '#FF4444' }, filtroStatus === StatusVegetacao.URGENTE && styles.statusCardActive]}
+              style={[
+                styles.statusCard,
+                { backgroundColor: '#1A0A0A', borderColor: '#FF4444' },
+                filtroStatus === StatusVegetacao.URGENTE && styles.statusCardActive,
+              ]}
               onPress={() => setFiltroStatus(StatusVegetacao.URGENTE)}
             >
               <Text style={[styles.statusNumber, { color: '#FF4444' }]}>{contarPorStatus(StatusVegetacao.URGENTE)}</Text>
@@ -218,7 +220,11 @@ export const DashboardScreen: React.FC = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.statusCard, { backgroundColor: '#1A1200', borderColor: '#FFB800' }, filtroStatus === StatusVegetacao.ATENCAO && styles.statusCardActive]}
+              style={[
+                styles.statusCard,
+                { backgroundColor: '#1A1200', borderColor: '#FFB800' },
+                filtroStatus === StatusVegetacao.ATENCAO && styles.statusCardActive,
+              ]}
               onPress={() => setFiltroStatus(StatusVegetacao.ATENCAO)}
             >
               <Text style={[styles.statusNumber, { color: '#FFB800' }]}>{contarPorStatus(StatusVegetacao.ATENCAO)}</Text>
@@ -226,7 +232,11 @@ export const DashboardScreen: React.FC = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.statusCard, { backgroundColor: '#0A1A0E', borderColor: '#00FF94' }, filtroStatus === StatusVegetacao.NORMAL && styles.statusCardActive]}
+              style={[
+                styles.statusCard,
+                { backgroundColor: '#0A1A0E', borderColor: '#00FF94' },
+                filtroStatus === StatusVegetacao.NORMAL && styles.statusCardActive,
+              ]}
               onPress={() => setFiltroStatus(StatusVegetacao.NORMAL)}
             >
               <Text style={[styles.statusNumber, { color: '#00FF94' }]}>{contarPorStatus(StatusVegetacao.NORMAL)}</Text>
@@ -242,7 +252,7 @@ export const DashboardScreen: React.FC = () => {
         </>
       )}
 
-      {/* Lista de Áreas */}
+      {/* Conteúdo da Lista */}
       {abaAtual === 'areas' ? (
         <FlatList
           data={areasFiltradas}
@@ -253,7 +263,7 @@ export const DashboardScreen: React.FC = () => {
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyIcon}>🌱</Text>
-              <Text style={styles.emptyText}>Nenhuma área encontrada</Text>
+              <Text style={styles.emptyText}>Nenhuma área encontrada no servidor</Text>
             </View>
           }
         />
@@ -267,13 +277,13 @@ export const DashboardScreen: React.FC = () => {
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyIcon}>📡</Text>
-              <Text style={styles.emptyText}>Nenhuma medição encontrada</Text>
+              <Text style={styles.emptyText}>Nenhuma medição cadastrada no servidor</Text>
             </View>
           }
         />
       )}
 
-      {/* Botão flutuante */}
+      {/* Botão Flutuante (POST no Backend) */}
       <TouchableOpacity style={styles.fab} onPress={simularColeta}>
         <Text style={styles.fabText}>🔬 Simular Coleta</Text>
       </TouchableOpacity>
@@ -282,208 +292,38 @@ export const DashboardScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0D0D0D',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#0D0D0D',
-    padding: 20,
-  },
-  loadingText: {
-    marginTop: 10,
-    color: '#A0A0A0',
-    letterSpacing: 1,
-  },
-  erroText: {
-    color: '#FF4444',
-    textAlign: 'center',
-    marginBottom: 20,
-    fontSize: 14,
-  },
-  header: {
-    backgroundColor: '#0D0D0D',
-    padding: 20,
-    paddingTop: 50,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1E1E1E',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#00FF94',
-    letterSpacing: 2,
-  },
-  subtitle: {
-    fontSize: 11,
-    color: '#4A4A4A',
-    letterSpacing: 3,
-    textTransform: 'uppercase',
-    marginTop: 2,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#0D0D0D',
-    borderBottomWidth: 1,
-    borderBottomColor: '#1E1E1E',
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  tabActive: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#00FF94',
-  },
-  tabText: {
-    color: '#3A3A3A',
-    fontWeight: '600',
-    fontSize: 14,
-    letterSpacing: 1.5,
-    textTransform: 'uppercase',
-  },
-  tabTextActive: {
-    color: '#00FF94',
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-    backgroundColor: '#0D0D0D',
-    borderBottomWidth: 1,
-    borderBottomColor: '#1E1E1E',
-  },
-  statusCard: {
-    flex: 1,
-    margin: 5,
-    padding: 10,
-    borderRadius: 6,
-    alignItems: 'center',
-    borderWidth: 1,
-  },
-  statusCardActive: {
-    borderWidth: 2,
-  },
-  statusNumber: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  statusLabel: {
-    fontSize: 9,
-    color: '#4A4A4A',
-    marginTop: 2,
-    letterSpacing: 1.5,
-    textTransform: 'uppercase',
-  },
-  clearFilterButton: {
-    backgroundColor: '#111',
-    borderWidth: 1,
-    borderColor: '#00FF94',
-    padding: 10,
-    margin: 10,
-    borderRadius: 4,
-    alignItems: 'center',
-  },
-  clearFilterText: {
-    color: '#00FF94',
-    fontWeight: 'bold',
-    fontSize: 12,
-    letterSpacing: 1,
-  },
-  list: {
-    padding: 10,
-  },
-  emptyContainer: {
-    padding: 40,
-    alignItems: 'center',
-  },
-  emptyIcon: {
-    fontSize: 40,
-    marginBottom: 12,
-  },
-  emptyText: {
-    fontSize: 14,
-    color: '#2A2A2A',
-    letterSpacing: 1,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#0D0D0D',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderRadius: 28,
-    borderWidth: 1,
-    borderColor: '#00FF94',
-    elevation: 8,
-  },
-  fabText: {
-    color: '#00FF94',
-    fontSize: 15,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.85)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalBox: {
-    backgroundColor: '#111111',
-    borderWidth: 1,
-    borderColor: '#1E1E1E',
-    borderRadius: 12,
-    padding: 24,
-    width: '85%',
-    maxWidth: 400,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#00FF94',
-    marginBottom: 12,
-    letterSpacing: 0.5,
-  },
-  modalMessage: {
-    fontSize: 14,
-    color: '#6A6A6A',
-    lineHeight: 22,
-    marginBottom: 24,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 12,
-  },
-  modalButtonCancel: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
-  },
-  modalButtonCancelText: {
-    color: '#4A4A4A',
-    fontWeight: 'bold',
-    fontSize: 13,
-  },
-  modalButtonConfirm: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 6,
-    backgroundColor: '#0A1A0E',
-    borderWidth: 1,
-    borderColor: '#00FF94',
-  },
-  modalButtonConfirmText: {
-    color: '#00FF94',
-    fontWeight: 'bold',
-    fontSize: 13,
-  },
+  container: { flex: 1, backgroundColor: '#0D0D0D' },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0D0D0D', padding: 20 },
+  loadingText: { marginTop: 10, color: '#A0A0A0', letterSpacing: 1 },
+  erroText: { color: '#FF4444', textAlign: 'center', marginBottom: 20, fontSize: 14, lineHeight: 20 },
+  header: { backgroundColor: '#0D0D0D', padding: 20, paddingTop: 50, borderBottomWidth: 1, borderBottomColor: '#1E1E1E' },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#00FF94', letterSpacing: 2 },
+  subtitle: { fontSize: 11, color: '#4A4A4A', letterSpacing: 3, textTransform: 'uppercase', marginTop: 2 },
+  tabContainer: { flexDirection: 'row', backgroundColor: '#0D0D0D', borderBottomWidth: 1, borderBottomColor: '#1E1E1E' },
+  tab: { flex: 1, paddingVertical: 16, alignItems: 'center' },
+  tabActive: { borderBottomWidth: 2, borderBottomColor: '#00FF94' },
+  tabText: { color: '#3A3A3A', fontWeight: '600', fontSize: 13, letterSpacing: 1, textTransform: 'uppercase' },
+  tabTextActive: { color: '#00FF94' },
+  statusContainer: { flexDirection: 'row', justifyContent: 'space-around', padding: 10, backgroundColor: '#0D0D0D', borderBottomWidth: 1, borderBottomColor: '#1E1E1E' },
+  statusCard: { flex: 1, margin: 5, padding: 10, borderRadius: 6, alignItems: 'center', borderWidth: 1 },
+  statusCardActive: { borderWidth: 2 },
+  statusNumber: { fontSize: 20, fontWeight: 'bold' },
+  statusLabel: { fontSize: 9, color: '#4A4A4A', marginTop: 2, letterSpacing: 1.5, textTransform: 'uppercase' },
+  clearFilterButton: { backgroundColor: '#111', borderWidth: 1, borderColor: '#00FF94', padding: 10, margin: 10, borderRadius: 4, alignItems: 'center' },
+  clearFilterText: { color: '#00FF94', fontWeight: 'bold', fontSize: 12, letterSpacing: 1 },
+  list: { padding: 10, paddingBottom: 90 },
+  emptyContainer: { padding: 40, alignItems: 'center' },
+  emptyIcon: { fontSize: 40, marginBottom: 12 },
+  emptyText: { fontSize: 14, color: '#4A4A4A', letterSpacing: 1 },
+  fab: { position: 'absolute', bottom: 20, right: 20, backgroundColor: '#0D0D0D', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 28, borderWidth: 1, borderColor: '#00FF94', elevation: 8 },
+  fabText: { color: '#00FF94', fontSize: 15, fontWeight: 'bold', letterSpacing: 0.5 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center' },
+  modalBox: { backgroundColor: '#111111', borderWidth: 1, borderColor: '#1E1E1E', borderRadius: 12, padding: 24, width: '85%', maxWidth: 400 },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#00FF94', marginBottom: 12, letterSpacing: 0.5 },
+  modalMessage: { fontSize: 14, color: '#A0A0A0', lineHeight: 22, marginBottom: 24 },
+  modalButtons: { flexDirection: 'row', justifyContent: 'flex-end', gap: 12 },
+  modalButtonCancel: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 6, borderWidth: 1, borderColor: '#2A2A2A' },
+  modalButtonCancelText: { color: '#A0A0A0', fontWeight: 'bold', fontSize: 13 },
+  modalButtonConfirm: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 6, backgroundColor: '#0A1A0E', borderWidth: 1, borderColor: '#00FF94' },
+  modalButtonConfirmText: { color: '#00FF94', fontWeight: 'bold', fontSize: 13 },
 });
