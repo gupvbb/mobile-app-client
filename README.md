@@ -1,107 +1,106 @@
 # 🌿 RoadGreen Mobile
 
-Aplicativo mobile de monitoramento de vegetação, desenvolvido em **React Native com TypeScript**.  
-O sistema simula sensores instalados em rodovias, permitindo visualizar e acompanhar o estado da vegetação em tempo real.
+Aplicativo mobile desenvolvido para o monitoramento de áreas de vegetação ao longo de rodovias.
+
+O sistema permite visualizar informações das áreas monitoradas, consultar medições realizadas pelos sensores e simular novas coletas de dados por meio da API desenvolvida em Spring Boot.
 
 ---
 
-##  Objetivo
+## 👥 Integrantes
 
-O objetivo do aplicativo é representar um sistema inteligente de monitoramento ambiental, auxiliando na identificação de riscos como:
-
-- Crescimento excessivo da vegetação  
-- Falta de manutenção em áreas críticas  
-- Condições que podem impactar a segurança das rodovias  
-
----
-
-# Integrantes 
-* Nicolas Cipriano   RM:562278 
-* Nicolas Alves      RM:561692 
-* Gustavo Pereira    RM:563280 
-* Pedro de Castro    RM:561825 
-* Thiago Almeida     RM:565365 
-* Gustavo Henrique   RM:563874
+- Nicolas Cipriano — RM562278
+- Nicolas Alves — RM561692
+- Gustavo Pereira — RM563280
+- Pedro de Castro — RM561825
+- Thiago Almeida Souza — RM565365
+- Gustavo Henrique — RM563874
 
 ---
 
-## Funcionalidades
+## 🎯 Objetivo do sistema
 
-- 📊 Visualização de áreas monitoradas  
-- 🚨 Identificação de status (Normal, Atenção, Urgente)  
-- 🔄 Simulação de coleta de dados  
-- 📈 Exibição de métricas da vegetação  
-- 📍 Informações detalhadas por área  
+O RoadGreen tem como objetivo auxiliar no monitoramento da vegetação presente em áreas próximas a rodovias.
 
----
+A aplicação permite acompanhar informações como:
 
-##  Tecnologias utilizadas
+- Altura da vegetação;
+- Densidade da vegetação;
+- Temperatura;
+- Umidade;
+- Tipo de vegetação;
+- Inclinação do terreno;
+- Data da coleta;
+- Status da área monitorada.
 
-- React Native (Expo)  
-- TypeScript  
-- Axios (consumo de API) 
-
----
-
-##  Integração com API
-
-O aplicativo consome uma API REST desenvolvida em Spring Boot, responsável por fornecer os dados de monitoramento.
-
----
- 
-## Cálculo de Status da Vegetação
- 
-O status de cada área é calculado automaticamente pela API com base em dois parâmetros coletados pelos sensores: **densidade da vegetação** e **altura da vegetação**.
- 
-| Status | Densidade | Altura | Significado |
-|--------|-----------|--------|-------------|
-| 🟢 **Normal** | até 50% | até 1.0m | Vegetação controlada, sem necessidade de intervenção imediata |
-| 🟡 **Atenção** | 51% a 70% | 1.01m a 1.5m | Vegetação em crescimento, monitoramento recomendado |
-| 🔴 **Urgente** | acima de 70% | acima de 1.5m | Vegetação fora do limite, intervenção necessária |
- 
-> Basta **uma** das condições ser verdadeira (densidade **OU** altura) para o status ser aplicado.
- 
----
- 
-## Card de Monitoramento
- 
-Cada card exibido no dashboard representa uma área monitorada e mostra as seguintes informações:
- 
-| Campo | Descrição |
-|-------|-----------|
-| **Código** | Identificador único da área (ex: SP-280-KM-50) |
-| **Rodovia** | Nome da rodovia monitorada |
-| **Status** | Estado atual da vegetação (Normal, Atenção ou Urgente) |
-| **Localização** | Pista ou trecho monitorado |
-| **Km** | Faixa de quilometragem da área |
-| **Terreno** | Tipo de terreno (Plano, Inclinado, Misto) |
-| **Sensor** | ID do sensor responsável pela última coleta |
-| **Altura Média** | Altura média da vegetação em metros |
-| **Densidade** | Percentual de densidade da vegetação |
-| **Medições** | Total de medições registradas nessa área |
-| **Última medição** | Data e hora da coleta mais recente |
+O aplicativo consome os dados disponibilizados pelo backend Spring Boot.
 
 ---
 
-##  Feedback Visual
+## 🧩 Funcionalidades
 
-O sistema utiliza cores para indicar o estado da vegetação:
-
-- 🟢 Normal → Situação controlada  
-- 🟡 Atenção → Requer monitoramento  
-- 🔴 Urgente → Situação crítica  
+- Visualização das áreas monitoradas;
+- Visualização do status de cada área;
+- Consulta das medições registradas no backend;
+- Visualização das métricas de vegetação;
+- Detalhamento das áreas monitoradas;
+- Simulação de uma nova coleta de dados;
+- Atualização das informações após uma nova coleta;
+- Tratamento de indisponibilidade do backend;
+- Filtros de visualização das áreas por status.
 
 ---
 
-##  Como executar o projeto
+## 🛠️ Tecnologias utilizadas
 
-```bash
-npm install
-npx expo start
+### Frontend
 
-## Como testar o status
- 
-1. Abra o app e visualize as áreas no dashboard
-2. Use os filtros no topo para visualizar áreas por status (Urgente, Atenção, Normal)
-3. Pressione o botão **🔬 Simular Coleta** para registrar novas medições via sensor
-4. O status dos cards será atualizado automaticamente com base nos novos valores coletados
+- React Native
+- Expo
+- TypeScript
+- Axios
+
+### Backend
+
+- Java 17
+- Spring Boot
+- Spring Web
+- Spring Data JPA
+- H2 Database
+
+---
+
+## 🔗 Repositórios
+
+### Frontend
+
+**Repositório:**  
+https://github.com/gupvbb/mobile-app-client.git
+
+### Backend
+
+**Repositório:**  
+https://github.com/gupvbb/roadside-veg-backend.git
+
+---
+
+# 📁 Estrutura principal do projeto
+
+A estrutura principal utilizada no frontend está organizada da seguinte forma:
+
+```text
+src/
+├── components/
+│   ├── AreaCard.tsx
+│   └── SensorCard.tsx
+│
+├── screens/
+│   └── DashboardScreen.tsx
+│
+├── services/
+│   └── api.ts
+│
+└── types/
+    ├── areaMonitoramento.ts
+    ├── calcularStatus.ts
+    ├── medicao.ts
+    └── sensor.ts
