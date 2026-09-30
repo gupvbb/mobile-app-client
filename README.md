@@ -120,3 +120,7 @@ No terminal do VScode execute:
 npm install 
 npx expo start
 ```
+
+## Link do video 
+
+link do youtube: https://youtu.be/J4jHitwWQJ0
