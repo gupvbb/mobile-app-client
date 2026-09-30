@@ -87,7 +87,7 @@ https://github.com/gupvbb/roadside-veg-backend.git
 
 A estrutura principal utilizada no frontend está organizada da seguinte forma:
 
-```text
+
 src/
 ├── components/
 │   ├── AreaCard.tsx
@@ -104,3 +104,19 @@ src/
     ├── calcularStatus.ts
     ├── medicao.ts
     └── sensor.ts
+---
+ ## Como testar
+
+### 1. Rodando o projeto
+
+Execute  primeiro o Backend pelo IntelliJ ou via terminal:
+
+```bash
+./mvnw spring-boot:run
+```
+
+No terminal do VScode execute:
+```bash
+npm install 
+npx expo start
+```
